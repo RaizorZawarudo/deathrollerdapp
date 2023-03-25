@@ -1,5 +1,7 @@
+@import url("../colors.css");
+
 .navbar {
-    background-color: #331b1a;
+    background-color: var(--primary-color);
     overflow: hidden;
     position: fixed;
     top: 0;
@@ -10,29 +12,30 @@
     display: flex;
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 5px 0 0 0;
   }
   
   .nav-item {
+    text-align: center;
+    font-size: 15px;
     margin: 0 10px;
-  }
-  
-  .navbar-nav li div {
     cursor: pointer;
     padding: 5px 10px;
-    border-radius: 5px;
-    background-color: #8e4222;
+    border-radius: 10px;
+    background-color: var(--secondary-color);
     margin-right: 10px;
+    display: flex;
+    align-items: center;
   }
   
-  .navbar-nav li div:hover {
-    background-color: #be3c05;
+  .nav-item:hover {
+    background-color: var(--tertiary-color);
   }
   
   .navbar-nav li:nth-last-child(2) {
     margin-left: auto;
   }
-  
+
   .navbar-nav li:last-child {
     margin-left: 10px;
   }

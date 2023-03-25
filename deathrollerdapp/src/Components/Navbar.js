@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { MyStats } from './MyStats';
 import { Leaderboards } from './Leaderboards';
+
 import './Navbar.css';
 
 const Navbar = () => {
@@ -48,6 +49,8 @@ const Navbar = () => {
     setShowConnectMenu(false);
   };
 
+  
+
   return (
     <nav className="navbar">
       <ul className="navbar-nav">
@@ -63,7 +66,7 @@ const Navbar = () => {
         <li className="nav-item">
           <div onClick={handleMyStatsClick}>My Stats</div>
         </li>
-        <li className="nav-item">
+        <li className="connect-button-item">
           <ConnectButton onClick={handleConnectWalletClick} />
         </li>
         <li className="nav-item">
