@@ -1,0 +1,6 @@
+body {
+    height: 100vh;
+    background-color: #111013;
+    background: linear-gradient(to bottom right, #331b1a 0%, #111013 100%);
+    background-size: cover;
+  }
