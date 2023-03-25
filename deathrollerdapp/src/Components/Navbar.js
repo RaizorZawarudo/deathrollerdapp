@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { MyStats } from './MyStats';
 import { Leaderboards } from './Leaderboards';
-import { ConnectButton } from './ConnectButton';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -13,48 +13,48 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleDeathRollerClick = () => {
-    navigate('/');    
-  }
+    navigate('/');
+  };
 
   const handleDashboardClick = () => {
-    navigate('/dashboard');    
-  }
+    navigate('/dashboard');
+  };
 
   const handleLeaderboardsClick = () => {
     setShowLeaderboards(true);
-  }
+  };
 
   const handleMyStatsClick = () => {
     setShowMyStats(true);
-  }
+  };
 
-  const handlConnectWalletClick = () => {
+  const handleConnectWalletClick = () => {
     setShowConnectMenu(true);
-  }
+  };
 
   const handleDocsClick = () => {
-    navigate('/docs');    
-  }
+    navigate('/docs');
+  };
 
   const handleLeaderboardsClose = () => {
     setShowLeaderboards(false);
-  }
+  };
 
   const handleMyStatsClose = () => {
     setShowMyStats(false);
-  }
+  };
 
   const handleConnectMenuClose = () => {
     setShowConnectMenu(false);
-  }
+  };
 
   return (
     <nav className="navbar">
       <ul className="navbar-nav">
-        <li className="nav-item">         
+        <li className="nav-item">
           <div onClick={handleDeathRollerClick}>DeathRoller</div>
         </li>
-        <li className="nav-item">         
+        <li className="nav-item">
           <div onClick={handleDashboardClick}>Dashboard</div>
         </li>
         <li className="nav-item">
@@ -64,7 +64,7 @@ const Navbar = () => {
           <div onClick={handleMyStatsClick}>My Stats</div>
         </li>
         <li className="nav-item">
-          <ConnectButton onClick={handlConnectWalletClick} />
+          <ConnectButton onClick={handleConnectWalletClick} />
         </li>
         <li className="nav-item">
           <div onClick={handleDocsClick}>Docs</div>
@@ -75,6 +75,6 @@ const Navbar = () => {
       {showConnectMenu && <ConnectButton onClose={handleConnectMenuClose} />}
     </nav>
   );
-}
+};
 
 export default Navbar;
