@@ -28,9 +28,9 @@ contract DeathRoller {
     
     constructor() {
         owner = msg.sender;
-        lobbies[0].entryFee = 1 ether;
-        lobbies[1].entryFee = 5 ether;
-        lobbies[2].entryFee = 10 ether;
+        lobbies[0].entryFee = 0.01 ether;
+        lobbies[1].entryFee = 0.05 ether;
+        lobbies[2].entryFee = 0.10 ether;
         for (uint256 i = 0; i < lobbies.length; i++) {
             lobbies[i].state = LobbyState.OPEN;
             emit LobbyOpened(i);
