@@ -85,6 +85,7 @@ const myCustomTheme = {
   },
 };
 
+
 function App() {
   return (
     <WagmiConfig client={wagmiClient}>

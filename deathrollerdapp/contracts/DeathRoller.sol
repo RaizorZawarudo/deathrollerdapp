@@ -1,94 +1,78 @@
-// SPDX-License-Identifier: UNLICENSED
-
-import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
-
-
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.0;
 
 contract DeathRoller {
-    uint public betAmount;
-    address[] public waitingPlayers;
-    Game[] public games;
-
-    struct Game {
-        address player1;
-        address player2;
-        uint betAmount;
-        bytes32 requestId;
-        uint player1Roll;
-        uint player2Roll;
-        bytes32 keyHash;
-        uint linkFee;
+    enum LobbyState { OPEN, TIMER, ROLLING, FINISHED }
+    
+    struct Lobby {
+        uint256 timer;
+        LobbyState state;
+        address[] players;
+        mapping(address => uint256) playerRolls;
+        mapping(address => uint256) playerTimestamps;
+        uint256 bountyPool;
+        uint256 entryFee;
     }
-
-    event NewGame(address player1, address player2, uint betAmount);
-
-    constructor(address vrfCoordinator, address linkToken) VRFConsumerBase(vrfCoordinator, linkToken) {
-        betAmount = _betAmount;
+    
+    Lobby[3] public lobbies;
+    address public owner;
+    
+    event LobbyOpened(uint256 indexed lobbyIndex);
+    event PlayerJoinedLobby(uint256 indexed lobbyIndex, address indexed player, uint256 timestamp);
+    event LobbyIsTimer(uint256 indexed lobbyIndex);
+    event LobbyIsRolling(uint256 indexed lobbyIndex);
+    
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only contract owner can call this function.");
+        _;
     }
-
-    function enterQueue() public {
-        require(msg.sender != address(0), "Invalid address.");
-        waitingPlayers.push(msg.sender);
-        if (waitingPlayers.length == 2) {
-            address player1 = waitingPlayers[0];
-            address player2 = waitingPlayers[1];
-            waitingPlayers.pop();
-            waitingPlayers.pop();
-            emit NewGame(player1, player2, betAmount);
-            Game memory newGame = Game(player1, player2, betAmount, 0, 0, 0, 0x8b1a9953c4611296a827abf8c47804d7, 0.1 * 10 ** 18);
-            games.push(newGame);
+    
+    constructor() {
+        owner = msg.sender;
+        lobbies[0].entryFee = 1 ether;
+        lobbies[1].entryFee = 5 ether;
+        lobbies[2].entryFee = 10 ether;
+        for (uint256 i = 0; i < lobbies.length; i++) {
+            lobbies[i].state = LobbyState.OPEN;
+            emit LobbyOpened(i);
         }
     }
-
-    function rollDice() public {
-    require(player1 == msg.sender || player2 == msg.sender, "You are not a player in this game.");
-    uint gameId = getGameId();
-    Game storage game = games[gameId];
-
-    require(game.state == GameState.IN_PROGRESS, "Game is not in progress.");
-    require(game.requestId == 0, "A dice roll has already been initiated for this player.");
-
-    bytes32 requestId = requestRandomness(game.keyHash, game.linkFee);
-    game.requestId = requestId;
-    emit DiceRollInitiated(requestId, gameId, msg.sender);
-    }
-
-
-    function fulfillRandomness(bytes32 _requestId, uint256 _randomness) internal override {
-        for (uint i = 0; i < games.length; i++) {
-            Game storage game = games[i];
-            if (game.requestId == _requestId) {
-                uint roll = (_randomness % 6) + 1;
-                if (msg.sender == game.player1) {
-                    game.player1Roll = roll;
-                } else {
-                    game.player2Roll = roll;
-                }
-                return;
-            }
-        }
-        revert("Invalid request ID.");
-    }
-
-    function determineWinner(uint gameId) public view returns (address) {
-        Game storage game = games[gameId];
-        require(game.player1Roll > 0 && game.player2Roll > 0, "Both players must roll the dice first.");
-        if (game.player1Roll > game.player2Roll) {
-            return game.player1;
-        } else if (game.player2Roll > game.player1Roll) {
-            return game.player2;
-        } else {
-            return address(0); // tie
+    
+    function joinLobby(uint256 lobbyIndex) payable external {
+        require(msg.value == lobbies[lobbyIndex].entryFee, "Invalid entry fee amount.");
+        require(lobbies[lobbyIndex].state == LobbyState.OPEN, "Lobby is not open.");
+        require(lobbies[lobbyIndex].playerTimestamps[msg.sender] == 0, "You have already joined this lobby.");
+        lobbies[lobbyIndex].players.push(msg.sender);
+        lobbies[lobbyIndex].playerTimestamps[msg.sender] = block.timestamp;
+        lobbies[lobbyIndex].bountyPool += msg.value;
+        emit PlayerJoinedLobby(lobbyIndex, msg.sender, block.timestamp);
+        if (lobbies[lobbyIndex].players.length >= 2) {
+            lobbies[lobbyIndex].timer = block.timestamp + 1 minutes;
+            lobbies[lobbyIndex].state = LobbyState.TIMER;
+            emit LobbyIsTimer(lobbyIndex);
         }
     }
-
-    function distributeWinnings(uint gameId) public {
-        Game storage game = games[gameId];
-        address winner = determineWinner(gameId);
-        require(winner != address(0), "The game ended in a tie.");
-        address loser = winner == game.player1 ? game.player2 : game.player1;
-        (bool success,) = winner.call{value: game.betAmount * 2}("");
-        require(success, "Transfer failed.");
+    
+    function getCurrentLobbyState(uint256 lobbyIndex) public view returns (LobbyState) {
+        return lobbies[lobbyIndex].state;
+    }
+    
+    function getCurrentLobbyPlayers(uint256 lobbyIndex) public view returns (address[] memory) {
+        return lobbies[lobbyIndex].players;
+    }
+    
+    function getCurrentPlayerRoll(uint256 lobbyIndex, address player) public view returns (uint256) {
+        return lobbies[lobbyIndex].playerRolls[player];
+    }
+    
+    function getCurrentPlayerTimestamp(uint256 lobbyIndex, address player) public view returns (uint256) {
+        return lobbies[lobbyIndex].playerTimestamps[player];
+    }
+    
+    function getCurrentBountyPool(uint256 lobbyIndex) public view returns (uint256) {
+        return lobbies[lobbyIndex].bountyPool;
+    }
+    
+    function getCurrentEntryFee(uint256 lobbyIndex) public view returns (uint256) {
+        return lobbies[lobbyIndex].entryFee;
     }
 }
