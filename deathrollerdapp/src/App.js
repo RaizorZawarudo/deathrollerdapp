@@ -1,10 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets, RainbowKitProvider, Theme} from '@rainbow-me/rainbowkit';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { mainnet, polygon, optimism, arbitrum, bsc } from 'wagmi/chains';
+import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
+import { polygon, arbitrum, polygonMumbai, localhost } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
+
 import LandingPage from './Pages/LandingPage';
 import Navbar from './Components/Navbar';
 import Dashboard from './Pages/Dashboard';
@@ -13,14 +14,14 @@ import './App.css';
 import './colors.css';
 
 const { chains, provider } = configureChains(
-  [mainnet, polygon, optimism, arbitrum, bsc],
+  [polygon, arbitrum, polygonMumbai, localhost],
   [
     alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
     publicProvider()
   ]
 );
 const { connectors } = getDefaultWallets({
-  appName: 'My RainbowKit App',
+  appName: 'DeathRoller',
   chains
 });
 const wagmiClient = createClient({
@@ -93,8 +94,8 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/dashboard" element={<Navbar><Dashboard /></Navbar>} />
-            <Route path="/docs" element={<Navbar><Docs /></Navbar>} />
+            <Route path="/dashboard" element={<Dashboard layout = {<Navbar/>} />} />
+            <Route path="/docs" element={<Docs  layout = {<Navbar/>} />}  />
           </Routes>
         </Router>
       </RainbowKitProvider>

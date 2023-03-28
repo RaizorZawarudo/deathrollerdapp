@@ -8,14 +8,20 @@ const hre = require("hardhat");
 
 async function main() {
 
-  const lockedAmount = hre.ethers.utils.parseEther("0.001");
-
   const Deathroller = await hre.ethers.getContractFactory("DeathRoller");
   const deathroller = await Deathroller.deploy();
 
-  await deathroller.deployed();
+  deployedDR = await deathroller.deployed();
+  // console.log(deployedDR);
 
-  console.log("DeathRoller MATIC and unlock timestamp ${deathroller.address}");
+  console.log(`DeathRoller MATIC and unlock timestamp ${deployedDR.address} and owner is ${deployedDR.signer.address}`);
+
+  //below is the verification function if your deploy on a testnet
+  //await sleep(45 * 1000);
+  // await hre.run("verify:verify", {
+  //   address: deployedDR.address,
+  //   constructorArguments: [],
+  // });
 }
 
 // We recommend this pattern to be able to use async/await everywhere

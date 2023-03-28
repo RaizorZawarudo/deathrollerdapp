@@ -9,15 +9,6 @@ code {
   font-family: var(--main-font);
 }
 
-
-.landing-page {
-  height: 100vh;
-  background-color: var(--custom-black-color);
-  background: linear-gradient(to bottom right, var(--primary-color) 0%, var(--custom-black-color) 100%);
-  background-size: cover;
-}
-
-
 .background-image {
   height: 100vh;
   background: url('./assets/drollerhp2.png') no-repeat center center fixed;
