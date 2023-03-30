@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
 contract DeathRoller {
     enum LobbyState { OPEN, TIMER, ROLLING, FINISHED }
@@ -18,7 +18,7 @@ contract DeathRoller {
     address public owner;
     
     event LobbyOpened(uint256 indexed lobbyIndex);
-    event PlayerJoinedLobby(uint256 indexed lobbyIndex, address indexed player, uint256 timestamp);
+    event PlayerJoinedLobby(uint256 indexed lobbyIndex, address indexed player, uint256 timestamp, uint256 playerPoolSize);
     event LobbyIsTimer(uint256 indexed lobbyIndex);
     event LobbyIsRolling(uint256 indexed lobbyIndex);
     
@@ -29,23 +29,24 @@ contract DeathRoller {
     
     constructor() {
         owner = msg.sender;
-        lobbies[0].entryFee = 0.01 ether;
-        lobbies[1].entryFee = 0.05 ether;
-        lobbies[2].entryFee = 0.10 ether;
+        lobbies[0].entryFee = 1000000000000000;
+        lobbies[1].entryFee = 5000000000000000;
+        lobbies[2].entryFee = 10000000000000000;
         for (uint256 i = 0; i < lobbies.length; i++) {
             lobbies[i].state = LobbyState.OPEN;
+            lobbies[i].bountyPool = 0;
             emit LobbyOpened(i);
         }
     }
     
     function joinLobby(uint256 lobbyIndex) payable external {
         require(msg.value == lobbies[lobbyIndex].entryFee, "Invalid entry fee amount.");
-        require(lobbies[lobbyIndex].state == LobbyState.OPEN, "Lobby is not open.");
+        require(lobbies[lobbyIndex].state == LobbyState.OPEN ||lobbies[lobbyIndex].state == LobbyState.TIMER , "Lobby is not open.");
         require(lobbies[lobbyIndex].playerTimestamps[msg.sender] == 0, "You have already joined this lobby.");
         lobbies[lobbyIndex].players.push(msg.sender);
         lobbies[lobbyIndex].playerTimestamps[msg.sender] = block.timestamp;
         lobbies[lobbyIndex].bountyPool += msg.value;
-        emit PlayerJoinedLobby(lobbyIndex, msg.sender, block.timestamp);
+        emit PlayerJoinedLobby(lobbyIndex, msg.sender, block.timestamp, lobbies[lobbyIndex].players.length);
         if (lobbies[lobbyIndex].players.length >= 2) {
             lobbies[lobbyIndex].timer = block.timestamp + 1 minutes;
             lobbies[lobbyIndex].state = LobbyState.TIMER;

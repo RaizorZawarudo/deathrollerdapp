@@ -10,7 +10,7 @@ const LandingPage = () => {
 
   return (
     <div className="landing-page">
-      <div class="background-image">
+      <div className="background-image">
         <div className="landing-page-content">
           <button onClick={handleClick}>ENTER</button>
         </div>

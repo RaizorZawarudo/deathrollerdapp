@@ -5,6 +5,7 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
+const chainId = hre.network.chainId
 
 async function main() {
 
@@ -15,7 +16,6 @@ async function main() {
   // console.log(deployedDR);
 
   console.log(`DeathRoller MATIC and unlock timestamp ${deployedDR.address} and owner is ${deployedDR.signer.address}`);
-
   //below is the verification function if your deploy on a testnet
   //await sleep(45 * 1000);
   // await hre.run("verify:verify", {
