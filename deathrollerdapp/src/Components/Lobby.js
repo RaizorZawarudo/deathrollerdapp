@@ -118,10 +118,10 @@ const Lobby = ({ lobbyId, entryFee }) => {
 
   return (
     <div className="lobby">
-        <p>Lobby {lobbyId} is {getStateString(lobbyState)}</p>
+        <p>Lobby {lobbyId} is : {getStateString(lobbyState)}</p>
         <p>{entryFee} MATIC</p>
         <p>  PLAYERS : {playerCount}</p>
-        <button onClick={() => HandleJoinLobby()}>Join Lobby {lobbyId}</button>
+        <li onClick={() => HandleJoinLobby()}>Join Lobby</li>
         <div className="lobby-state">
         
         </div>

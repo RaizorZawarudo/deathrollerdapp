@@ -28,7 +28,7 @@ code {
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: var(--secondary-color);
-  color: var(--custom-black-color);
+  color: white;
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
