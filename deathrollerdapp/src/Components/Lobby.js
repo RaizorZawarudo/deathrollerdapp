@@ -20,7 +20,7 @@ function getStateString(state) {
     if (state === 0) {
       return "OPEN";
     } else if (state === 1) {
-      return "TIMER";
+      return " 0: 24 remaining to join";
     } else if (state === 3) {
       return "ROLLING";
     } else if (state === 4) {
@@ -112,19 +112,42 @@ const Lobby = ({ lobbyId, entryFee }) => {
 
     const { data: joinData, isLoading: isJoinLoading, isSuccess: isJoinSuccess, write} = useContractWrite(config);  
     const HandleJoinLobby = async () => {
-        const txHash= await write?.();
+      //check if the user has already joined the lobby
+      const hasJoined = contractRead.data.some((player) => player === address);
+      if (hasJoined) {
+        return;
+      }
+      await write?.();
       // update UI as needed
     };
 
+    //Define the text to display on the Join button based on the current state
+    let joinButtonText;
+    if (isJoinLoading) {
+      joinButtonText = "Joining...";
+    } else if (isJoinSuccess) {
+      joinButtonText = "Joined!";
+    } else if (contractRead.data.some((player) => player === address)) {
+      joinButtonText = "Joined!";
+    } else {
+      joinButtonText = "Join Lobby";
+    }
+
+    //Disable the Join button if already joined or in progress
+    const isJoinDisabled = isJoinLoading || isJoinSuccess || contractRead.data.some((player) => player === address);
+
+    
+
   return (
     <div className="lobby">
-        <p>Lobby {lobbyId} is : {getStateString(lobbyState)}</p>
-        <p>{entryFee} MATIC</p>
-        <p>  PLAYERS : {playerCount}</p>
-        <li onClick={() => HandleJoinLobby()}>Join Lobby</li>
+        <div>LOBBY {lobbyId + 1} </div>
+        <div> {getStateString(lobbyState)}</div>
+        <div> Entry fee : {entryFee} MATIC</div >
+        <div> Current Players : {playerCount}</div>
         <div className="lobby-state">
         
         </div>
+        <button onClick={HandleJoinLobby} disabled={isJoinDisabled}>{joinButtonText}</button>
     </div>
   );
 };

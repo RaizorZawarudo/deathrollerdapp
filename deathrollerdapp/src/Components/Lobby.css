@@ -1,6 +1,6 @@
 @import url("../colors.css");
 .lobby {
-    width: 40%;
+    width: 100%;
     background-color: var(--primary-color);
     color: white;
     text-align: center;
@@ -9,10 +9,11 @@
     border: 2px solid var(--tertiary-color);
     padding: 20px;
     box-sizing: border-box;
-    display: inline-block;
+    flex-direction: column;
+    justify-content: center;
   }
   
-.lobby li {
+.lobby button {
     text-align: center;
     font-size: 15px;
     margin: 0 10px;
@@ -22,12 +23,17 @@
     border: 2px solid white;
     background-color: var(--secondary-color);
     margin-right: 10px;
-    display: flex;
     align-items: center;
+    transition: all 0.3s ease-in-out;
+    color: white;
   }
   
-  .lobby li:hover {
+  .lobby button:hover {
     background-color: var(--tertiary-color);
     cursor: pointer;
+  }
+
+  .lobby button:disabled {
+    background-color: var(--primary-color);
   }
   

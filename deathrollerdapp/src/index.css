@@ -34,7 +34,7 @@ code {
   padding: 10px 20px;
   font-size: 1.2rem;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.5s ease-in-out;
 }
 
 .landing-page-content button:hover {
