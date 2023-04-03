@@ -6,3 +6,14 @@ body {
   background: linear-gradient(to bottom right, #331b1a 0%, #111013 100%);
   background-size: cover;
 }
+
+html {
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+

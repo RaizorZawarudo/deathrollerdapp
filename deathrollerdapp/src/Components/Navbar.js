@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import {useAccount } from "wagmi";
 import { MyStats } from './MyStats';
 import { Leaderboards } from './Leaderboards';
 
 import './Navbar.css';
 
 const Navbar = () => {
+  const { address, isConnecting, isDisconnected } = useAccount();
   const [showLeaderboards, setShowLeaderboards] = useState(false);
   const [showMyStats, setShowMyStats] = useState(false);
   const [showConnectMenu, setShowConnectMenu] = useState(false);
@@ -60,12 +62,19 @@ const Navbar = () => {
         <li className="nav-item">
           <div onClick={handleDashboardClick}>Dashboard</div>
         </li>
-        <li className="nav-item">
-          <div onClick={handleLeaderboardsClick}>Leaderboards</div>
-        </li>
-        <li className="nav-item">
-          <div onClick={handleMyStatsClick}>My Stats</div>
-        </li>
+
+        {!isDisconnected && (
+          <>
+            <li className="nav-item">
+              <div onClick={handleLeaderboardsClick}>Leaderboards</div>
+            </li>
+            <li className="nav-item">
+              <div onClick={handleMyStatsClick}>My Stats</div>
+            </li>
+          </>
+        )}
+
+
         <li className="connect-button-item">
           <ConnectButton onClick={handleConnectWalletClick} />
         </li>

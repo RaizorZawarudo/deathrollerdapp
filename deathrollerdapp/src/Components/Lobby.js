@@ -16,6 +16,8 @@ import {
 import tokenContract from '../artifacts/contracts/DeathRoller.sol/DeathRoller.json';
 import './Lobby.css';
 
+import LobbyDetails from './LobbyDetails';
+
 function getStateString(state) {
     if (state === 0) {
       return "OPEN";
@@ -36,6 +38,7 @@ const Lobby = ({ lobbyId, entryFee }) => {
 
     const [playerCount, setPlayerCount] = useState(0);
     const [lobbyState, setLobbyState] = useState(4);
+    const [showLobbyDetails, setShowLobbyDetails] = useState(false);
     
 
     //listen to LOBBY PLAYER JOINED event and update Lobby player amount
@@ -76,6 +79,8 @@ const Lobby = ({ lobbyId, entryFee }) => {
         functionName: 'getCurrentLobbyPlayers',
         args: [lobbyId],
     })
+
+    
     
 
     //reading from contract : GET LOBBY STATE
@@ -113,7 +118,7 @@ const Lobby = ({ lobbyId, entryFee }) => {
     const { data: joinData, isLoading: isJoinLoading, isSuccess: isJoinSuccess, write} = useContractWrite(config);  
     const HandleJoinLobby = async () => {
       //check if the user has already joined the lobby
-      const hasJoined = contractRead.data.some((player) => player === address);
+      const hasJoined = contractRead.data && contractRead.data.some((player) => player === address);
       if (hasJoined) {
         return;
       }
@@ -127,15 +132,18 @@ const Lobby = ({ lobbyId, entryFee }) => {
       joinButtonText = "Joining...";
     } else if (isJoinSuccess) {
       joinButtonText = "Joined!";
-    } else if (contractRead.data.some((player) => player === address)) {
+    } else if (contractRead.data && contractRead.data.some((player) => player === address)) {
       joinButtonText = "Joined!";
     } else {
       joinButtonText = "Join Lobby";
     }
 
     //Disable the Join button if already joined or in progress
-    const isJoinDisabled = isJoinLoading || isJoinSuccess || contractRead.data.some((player) => player === address);
+    const isJoinDisabled = isJoinLoading || isJoinSuccess || (contractRead.data && contractRead.data.some((player) => player === address));
 
+    const handleViewLobbyDetails = () => {
+      setShowLobbyDetails(true);
+    }
     
 
   return (
@@ -144,10 +152,12 @@ const Lobby = ({ lobbyId, entryFee }) => {
         <div> {getStateString(lobbyState)}</div>
         <div> Entry fee : {entryFee} MATIC</div >
         <div> Current Players : {playerCount}</div>
-        <div className="lobby-state">
-        
-        </div>
         <button onClick={HandleJoinLobby} disabled={isJoinDisabled}>{joinButtonText}</button>
+        {isJoinDisabled &&
+          <button className='lobby-details-button' onClick={handleViewLobbyDetails}>View</button>
+        }
+        {showLobbyDetails && 
+          (<LobbyDetails  onClose={() => setShowLobbyDetails(false)} lobbyId= {lobbyId} entryFee ={entryFee} /> )}
     </div>
   );
 };

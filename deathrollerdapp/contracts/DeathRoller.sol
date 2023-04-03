@@ -53,6 +53,10 @@ contract DeathRoller {
             emit LobbyIsTimer(lobbyIndex);
         }
     }
+
+    function getCurrentLobbyTimer(uint256 lobbyIndex) public view returns (uint256) {
+        return lobbies[lobbyIndex].timer;
+    }
     
     function getCurrentLobbyState(uint256 lobbyIndex) public view returns (LobbyState) {
         return lobbies[lobbyIndex].state;

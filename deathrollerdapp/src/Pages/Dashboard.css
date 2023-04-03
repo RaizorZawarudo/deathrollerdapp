@@ -10,3 +10,12 @@
   margin: 10px;
 }
 
+html {
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}

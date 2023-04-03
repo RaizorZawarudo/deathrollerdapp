@@ -1,6 +1,7 @@
 @import url("../colors.css");
 .lobby {
-    width: 100%;
+    width: 20vw;
+    height: 20vh;
     background-color: var(--primary-color);
     color: white;
     text-align: center;
